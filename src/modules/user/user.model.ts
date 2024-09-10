@@ -34,4 +34,12 @@ userSchema.post("save", function (doc: any, next) {
   next();
 });
 
+userSchema.statics.isUserExist = async function (id: string) {
+  const existingUser = await User.findOne({
+    _id: id,
+    isDeleted: { $ne: true },
+  });
+  return existingUser;
+};
+
 export const User = model<TUser>("User", userSchema);
