@@ -1,9 +1,9 @@
 import { model, Schema } from "mongoose";
-import { TUser } from "./user.interface";
+import { TUser, TUserModel } from "./user.interface";
 import { role } from "./user.constant";
 import bcrypt from "bcrypt";
 const saltRounds = 10;
-const userSchema = new Schema<TUser>(
+const userSchema = new Schema<TUser, TUserModel>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true },
@@ -42,4 +42,11 @@ userSchema.statics.isUserExist = async function (id: string) {
   return existingUser;
 };
 
-export const User = model<TUser>("User", userSchema);
+userSchema.statics.isPasswordMatched = async function (
+  plainPassword: string,
+  hashedPassword: string
+) {
+  return await bcrypt.compare(plainPassword, hashedPassword);
+};
+
+export const User = model<TUser, TUserModel>("User", userSchema);

@@ -1,3 +1,5 @@
+import { Model } from "mongoose";
+
 export type TRole = "admin" | "user";
 
 export type TUser = {
@@ -9,3 +11,11 @@ export type TUser = {
   address: string;
   isDeleted: boolean;
 };
+
+export interface TUserModel extends Model<TUser> {
+  isUserExist(id: string): Promise<TUser | null>;
+  isPasswordMatched(
+    plainPassword: string,
+    hashedPassword: string
+  ): Promise<boolean>;
+}
