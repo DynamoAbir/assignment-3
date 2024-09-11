@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import app from "./app";
-const port = 5020;
+const port = 5021;
 
 async function main() {
   try {
