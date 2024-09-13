@@ -7,7 +7,8 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { User } from "../modules/user/user.model";
 import config from "../config";
 
-const auth = (...requireRoles: TUserRole[]) => {
+// Middleware to handle authentication and authorization
+const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     // Extract the token from the authorization header
     const token = req.headers.authorization?.split(" ")[1];
@@ -15,7 +16,7 @@ const auth = (...requireRoles: TUserRole[]) => {
       return sendResponse(res, {
         success: false,
         statusCode: httpStatus.UNAUTHORIZED,
-        message: "Unauthorized",
+        message: "Unauthorized: Token is missing",
       });
     }
 
@@ -27,14 +28,24 @@ const auth = (...requireRoles: TUserRole[]) => {
         config.jwt_access_secret as string
       ) as JwtPayload;
     } catch (error) {
+      console.error("JWT verification error:", error); // Log verification errors
       return sendResponse(res, {
         success: false,
         statusCode: httpStatus.UNAUTHORIZED,
-        message: "Unauthorized",
+        message: "Unauthorized: Invalid token",
       });
     }
 
     const { userId, role } = decoded;
+
+    // Ensure the token contains both userId and role
+    if (!userId || !role) {
+      return sendResponse(res, {
+        success: false,
+        statusCode: httpStatus.UNAUTHORIZED,
+        message: "Unauthorized: Missing user information in token",
+      });
+    }
 
     // Check if the user exists
     const user = await User.isUserExist(userId);
@@ -42,21 +53,21 @@ const auth = (...requireRoles: TUserRole[]) => {
       return sendResponse(res, {
         success: false,
         statusCode: httpStatus.UNAUTHORIZED,
-        message: "You have no access to this route",
+        message: "User not found or unauthorized",
       });
     }
 
-    // Check if the user role is authorized
-    if (requireRoles.length && !requireRoles.includes(role)) {
+    // Check if the user's role is authorized for this action
+    if (requiredRoles.length && !requiredRoles.includes(role)) {
       return sendResponse(res, {
         success: false,
         statusCode: httpStatus.FORBIDDEN,
-        message: "You have no access to this route",
+        message: "Access forbidden: You do not have the required role",
       });
     }
 
-    // Attach user data to request object
-    req.user = decoded;
+    // Attach user data to the request object (ensure it follows the correct structure)
+    req.user = { userId, role };
     next();
   });
 };

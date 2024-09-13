@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { AuthRoutes } from "../modules/auth/auth.routes";
 import { FacilityRoutes } from "../modules/facility/facility.routes"; // Fix the incomplete import
+import { BookingRoutes } from "../modules/booking/booking.routes";
 
 const router = Router();
 
@@ -12,6 +13,10 @@ const moduleRoutes = [
   {
     path: "/facilities",
     route: FacilityRoutes,
+  },
+  {
+    path: "/bookings",
+    route: BookingRoutes,
   },
 ];
 

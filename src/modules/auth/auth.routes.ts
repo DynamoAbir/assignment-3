@@ -1,10 +1,12 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import validateRequiest from "../../middlewares/validateRequiest";
 import { AuthValidationSchema } from "./auth.validation";
 import { AuthControllers } from "./auth.controller";
 
 const router = Router();
-
+router.get("/", (req: Request, res: Response) => {
+  res.send("Welcome to Rockland");
+});
 router.post(
   "/signup",
 

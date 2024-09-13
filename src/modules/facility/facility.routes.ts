@@ -15,5 +15,15 @@ router.post(
 );
 
 router.get("/", FacilityController.getAllFacilities);
+router.get("/:id", FacilityController.getSignleFacility);
+
+router.put(
+  "/:id",
+  auth(USER_ROLE.admin),
+  validateRequiest(FacilityValidationSchemas.updateFacilityValidationSchema),
+  FacilityController.updateFacility
+);
+
+router.delete("/:id", auth(USER_ROLE.admin), FacilityController.deleteFacility);
 
 export const FacilityRoutes = router;
