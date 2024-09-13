@@ -80,41 +80,42 @@ const createNewBooking2 = catchAsync(async (req, res) => {
 //   });
 // });
 
-// const getUserBookings = catchAsync(async (req, res) => {
-//   const bookings = await BookingServics.getBookingsByUser(req.user?._id);
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: "Bookings retrieved successfully",
-//     data: bookings,
-//   });
-// });
+const getUserBookings = catchAsync(async (req, res) => {
+  const { userId } = req.params;
+  const bookings = await BookingServics.getBookingsByUser(userId);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Bookings retrieved successfully",
+    data: bookings,
+  });
+});
 
-// const getBooking = catchAsync(async (req, res) => {
-//   const bookings = await BookingServics.getAllBooking();
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: "Bookings retrieved successfully",
-//     data: bookings,
-//   });
-// });
+const getAllBooking = catchAsync(async (req, res) => {
+  const bookings = await BookingServics.getAllBooking();
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Bookings retrieved successfully",
+    data: bookings,
+  });
+});
 
-// const cancelUserBooking = catchAsync(async (req, res) => {
-//   const booking = await BookingServics.cancelBooking(req.params.id);
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: "Booking canceled successfully",
-//     data: booking,
-//   });
-// });
+const cancelUserBooking = catchAsync(async (req, res) => {
+  const booking = await BookingServics.cancelBooking(req.params.id);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Booking canceled successfully",
+    data: booking,
+  });
+});
 
 export const bookingControllers = {
-  // cancelUserBooking,
-  // getBooking,
-  // createNewBooking,
+  cancelUserBooking,
+  getAllBooking,
+
   checkFacilityAvalability,
   createNewBooking2,
-  // getUserBookings,
+  getUserBookings,
 };

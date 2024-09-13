@@ -69,52 +69,36 @@ const createBookingIntoDB = async (
   return await booking.save();
 };
 
-// const createBooking2 = async (userId: string, bookingDate: any) => {
-//   if (!userId) {
-//     throw new AppError(httpStatus.BAD_REQUEST, "User ID is required");
-//   }
-
-//   const facility = await Facility.findById();
-//   if (!facility) {
-//     throw new AppError(httpStatus.BAD_REQUEST, "Facility not found");
-//   }
-
-//   const durationHours =
-//     (new Date(bookingDate.endTime).getTime() -
-//       new Date(bookingDate.startTime).getTime()) /
-//     (1000 * 60 * 60);
-//   const payableAmount = durationHours * facility.pricePerHour;
-
-//   const booking = new Booking({
-//     ...bookingDate,
-//     user: userId,
-//     payableAmount,
-//     isBooked: "confirmed",
-//   });
-
-//   return await booking.save();
-// };
-
-// const getBookingsByUser = async (userId: string) => {
-//   return await Booking.find({ user: userId }).populate("facility");
-// };
-// const getAllBooking = async () => {
-//   return await Booking.find().populate("facility").populate("user");
-// };
-// const cancelBooking = async (bookingId: string) => {
-//   const booking = await Booking.findByIdAndUpdate(
-//     bookingId,
-//     { isBooked: "canceled" },
-//     { new: true }
-//   );
-//   return booking;
-// };
+const getBookingsByUser = async (userId: string) => {
+  if (!userId) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User ID is required");
+  }
+  const bookings = await Booking.find({ userId }).populate("facilityId");
+  if (!bookings) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "No bookings found for This User"
+    );
+  }
+  return bookings;
+};
+const getAllBooking = async () => {
+  return await Booking.find().populate("facility").populate("user");
+};
+const cancelBooking = async (bookingId: string) => {
+  const booking = await Booking.findByIdAndUpdate(
+    bookingId,
+    { isBooked: "canceled" },
+    { new: true }
+  );
+  return booking;
+};
 
 export const BookingServics = {
   checkAvailability,
   createBookingIntoDB,
-  // createBooking,
-  // getBookingsByUser,
-  // cancelBooking,
-  // getAllBooking,
+
+  getBookingsByUser,
+  cancelBooking,
+  getAllBooking,
 };
